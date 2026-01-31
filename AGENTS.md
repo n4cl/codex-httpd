@@ -50,6 +50,7 @@ codex-httpd は、Codex CLI をバックエンドにした Codex API Server を�
 ## ディレクトリ構成
 - ソース: `src/`、テスト: `tests/`
 - テストファイル命名: `tests/test_*.py`
+- 仕様・設計・タスク: `docs/specs/<feature_name>/design.md` と `docs/specs/<feature_name>/task.md`
 
 ## 完了報告に含めること
 - 変更概要（1〜5項目）
