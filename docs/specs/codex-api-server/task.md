@@ -4,9 +4,9 @@
 仕様変更があれば内容を更新する。
 
 ## 実装計画（チェックリスト）
-- [ ] 1. ローカル開発セットアップ
+- [x] 1. ローカル開発セットアップ
 - [x] 1.1 Python 3.13+ と uv の利用方針を明文化する
-  - 前提: Python 3.13+ と uv をインストールする（pyenv/mise などの利用可）
+  - 前提: Python 3.13+ と uv をインストールする
   - セットアップ: `uv sync` で .venv 作成と依存導入を行う
   - 開発コマンドは `uv run ...` を標準とする（ruff/pytest/uvicorn など）
   - _Design ref: 影響範囲_
@@ -17,10 +17,9 @@
   - 自動化/CI: API キー方式も許容し、必要に応じて `codex login --with-api-key` を利用する
   - 認証キャッシュ: `~/.codex/auth.json` または OS の credential store に保存
   - ローカル開発での扱い: `auth.json` は機密情報として扱い、リポジトリに含めない
-  - Docker での再利用: `cli_auth_credentials_store = "file"` を指定し、`CODEX_HOME` 配下の `auth.json` を read-only でマウントして利用する
   - _Design ref: 影響範囲_
-- [ ] 1.3 開発起動手順の最小セットを定義する
-  - 例: `uv sync` → `uv run <起動コマンド>`
+- [x] 1.3 開発起動手順の最小セットを定義する
+  - 例: `uv sync` → `uv run uvicorn codex_httpd.main:app --reload`
   - _Design ref: 影響範囲_
 
 - [ ] 2. Docker 運用設計
@@ -32,6 +31,7 @@
   - `_Design ref: 仕様 / インターフェース > トークン設計`
 - [ ] 2.3 Docker 内のセットアップ方針を定義する
   - Codex CLI と必要パッケージのインストール方法を確定
+  - 認証情報の再利用方針: `cli_auth_credentials_store = "file"` を指定し、`CODEX_HOME` 配下の `auth.json` を read-only でマウントして利用する
   - `_Design ref: 影響範囲`
 
 - [ ] 3. API 仕様の確定とスキーマ整理
