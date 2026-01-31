@@ -8,9 +8,11 @@ codex-httpd は、Codex CLI をバックエンドにした Codex API Server を�
 
 ## 技術スタック
 - Python: 3.13+
+- Web framework: FastAPI
 - 依存管理: uv（原則 `pip install` を直接使わない）
 - Lint/Format: ruff
 - テスト: pytest
+- 実行環境: 開発はローカル、本番は Docker
 
 ## 作業手順
 ### 共通
