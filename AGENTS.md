@@ -3,8 +3,8 @@
 これは codex-httpd プロジェクトです。
 codex-httpd は、Codex CLI をバックエンドにした Codex API Server を提供する。
 
-## コミットメッセージ
-- ルール: [docs/commit-message.md](docs/commit-message.md)
+## git のコミットメッセージ
+- コミットメッセージは次のルールに従う: [docs/commit-message.md](docs/commit-message.md)
 
 ## 技術スタック
 - Python: 3.13+
