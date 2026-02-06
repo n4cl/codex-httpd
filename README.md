@@ -59,3 +59,18 @@ uv run pytest -q
 
 ### 非要件
 - 本サーバーは利用者認証・独自トークン管理を行わない。
+
+### Docker イメージ作成
+```bash
+docker build -t codex-httpd:latest .
+```
+
+### Docker 起動例
+`~/.codex/auth.json` を read-only でマウントして起動する。
+```bash
+docker run --rm \
+  -p 8000:8000 \
+  -e CODEX_HOME=/home/app/.codex \
+  -v ~/.codex/auth.json:/home/app/.codex/auth.json:ro \
+  codex-httpd:latest
+```
