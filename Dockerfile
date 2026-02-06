@@ -1,5 +1,7 @@
 FROM python:3.13-slim
 
+ARG CODEX_CLI_VERSION=0.98.0
+
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     UV_LINK_MODE=copy \
@@ -16,7 +18,7 @@ WORKDIR /app
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends ca-certificates curl nodejs npm \
-    && npm install -g @openai/codex \
+    && npm install -g "@openai/codex@${CODEX_CLI_VERSION}" \
     && pip install --no-cache-dir uv \
     && rm -rf /var/lib/apt/lists/*
 

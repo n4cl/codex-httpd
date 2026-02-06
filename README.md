@@ -53,6 +53,19 @@ uv run pytest -q
 - `CODEX_BIN`（任意, 既定値: `codex`）: Codex CLI 実行バイナリ名/パス
 - `CODEX_HOME`（必須, 既定値なし）: 認証情報 `auth.json` を含む Codex のホームディレクトリ
 
+ローカルと Docker で共通化する環境変数は `.env` にまとめる運用を推奨する。
+```bash
+cp .env.example .env
+set -a
+source .env
+set +a
+```
+
+`CODEX_HOME` は環境ごとに異なるため、実行時に別途指定する。
+```bash
+export CODEX_HOME="$HOME/.codex"
+```
+
 ### 認証情報の扱い
 - `CODEX_HOME/auth.json` はコンテナに read-only でマウントする。
 - `auth.json` は機密情報として扱い、イメージには含めない。
@@ -70,7 +83,11 @@ docker build -t codex-httpd:latest .
 ```bash
 docker run --rm \
   -p 8000:8000 \
+  --env-file .env \
   -e CODEX_HOME=/home/app/.codex \
   -v ~/.codex/auth.json:/home/app/.codex/auth.json:ro \
   codex-httpd:latest
 ```
+
+### Codex CLI バージョン
+Docker では `@openai/codex@0.98.0` に固定してインストールする（`Dockerfile` の `CODEX_CLI_VERSION`）。
