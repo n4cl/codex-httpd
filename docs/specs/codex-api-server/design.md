@@ -62,18 +62,22 @@
 ### API
 #### Thread
 - `POST /threads`
+  - 新規 thread を作成する
   - Codex `thread/start` を呼び、`threadId`（=`thread.id`）を返す
 - `POST /threads/{threadId}/resume`
+  - 既存 thread を再開する
   - Codex `thread/resume` を呼び、`threadId` を返す（同一 ID）
 
 #### Turn
 - `POST /threads/{threadId}/turns`
+  - 指定 thread に対して生成（turn）を開始する
   - Codex `turn/start` を呼ぶ
   - `stream=false`: `turnId` と `output` を返す
   - `stream=true`: `turnId` と `eventsUrl` を返す
 
 #### Streaming
 - `GET /threads/{threadId}/turns/{turnId}/events`（SSE）
+  - 指定 turn のイベントを SSE で取得する
   - `delta`: Codex `agent_message_delta` を中継（`itemId` を保持）
   - `final`: Codex `turn/completed` かつ `turn.status=completed`
   - `cancelled`: Codex `turn/completed` かつ `turn.status=interrupted`
@@ -81,6 +85,7 @@
 
 #### Cancel
 - `POST /threads/{threadId}/turns/{turnId}/interrupt`
+  - 実行中の turn を中断する
   - Codex `turn/interrupt` を呼ぶ（`threadId` と `turnId` の両方が必須）
 
 ### 動作フロー（抜粋）

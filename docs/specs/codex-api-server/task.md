@@ -56,12 +56,22 @@
   - 完了の定義: Dockerfile または運用ドキュメントに、CLI 導入手順と認証情報の read-only マウント手順が記載されている
 
 - [ ] 3. API 仕様の確定とスキーマ整理
-- [ ] 3.1 リクエスト/レスポンスの JSON スキーマを定義する (C)
+- [x] 3.1 リクエスト/レスポンスの JSON スキーマを定義する
   - `POST /threads`
+  - リクエスト: 空ボディ
+  - レスポンス: `200 OK` `{"threadId": string, "requestId": string}`
   - `POST /threads/{threadId}/resume`
+  - リクエスト: 空ボディ
+  - レスポンス: `200 OK` `{"threadId": string, "requestId": string}`
   - `POST /threads/{threadId}/turns`
+  - リクエスト: `{"input": string, "stream"?: boolean}`（`stream` 既定値: `false`）
+  - レスポンス（`stream=false`）: `200 OK` `{"turnId": string, "output": string, "requestId": string}`
+  - レスポンス（`stream=true`）: `200 OK` `{"turnId": string, "eventsUrl": string, "requestId": string}`
   - `GET /threads/{threadId}/turns/{turnId}/events`
+  - レスポンス: `200 OK` `text/event-stream`
   - `POST /threads/{threadId}/turns/{turnId}/interrupt`
+  - リクエスト: 空ボディ
+  - レスポンス: `200 OK` `{"turnId": string, "requestId": string}`
   - `_Design ref: 仕様 / インターフェース > API`
   - 完了の定義: 全エンドポイントについてリクエスト/レスポンスの必須項目、型、ステータスコードが定義されている
 - [ ] 3.2 SSE イベント形式と順序を定義する (C)
