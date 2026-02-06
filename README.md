@@ -39,3 +39,23 @@ uv run ruff format .
 uv run ruff check .
 uv run pytest -q
 ```
+
+## Docker 運用（設計）
+### 起動方式
+- `codex app-server` と FastAPI を同一コンテナで運用する。
+
+### 環境変数
+- `CODEX_HTTPD_HOST`（任意, 既定値: `0.0.0.0`）: FastAPI の bind host
+- `CODEX_HTTPD_PORT`（任意, 既定値: `8000`）: FastAPI の listen port
+- `CODEX_HTTPD_LOG_LEVEL`（任意, 既定値: `info`）: API Server のログレベル
+- `CODEX_HTTPD_APP_SERVER_STARTUP_TIMEOUT_SEC`（任意, 既定値: `15`）: `codex app-server` 起動待ちタイムアウト（秒）
+- `CODEX_HTTPD_RPC_TIMEOUT_SEC`（任意, 既定値: `60`）: JSON-RPC 応答待ちタイムアウト（秒）
+- `CODEX_BIN`（任意, 既定値: `codex`）: Codex CLI 実行バイナリ名/パス
+- `CODEX_HOME`（必須, 既定値なし）: 認証情報 `auth.json` を含む Codex のホームディレクトリ
+
+### 認証情報の扱い
+- `CODEX_HOME/auth.json` はコンテナに read-only でマウントする。
+- `auth.json` は機密情報として扱い、イメージには含めない。
+
+### 非要件
+- 本サーバーは利用者認証・独自トークン管理を行わない。
