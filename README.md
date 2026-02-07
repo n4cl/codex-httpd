@@ -49,7 +49,7 @@ uv run pytest -q
 - `CODEX_HTTPD_PORT`（任意, 既定値: `8000`）: FastAPI の listen port
 - `CODEX_HTTPD_LOG_LEVEL`（任意, 既定値: `info`）: API Server のログレベル
 - `CODEX_HTTPD_APP_SERVER_STARTUP_TIMEOUT_SEC`（任意, 既定値: `15`）: `codex app-server` 起動待ちタイムアウト（秒）
-- `CODEX_HTTPD_RPC_TIMEOUT_SEC`（任意, 既定値: `60`）: JSON-RPC 応答待ちタイムアウト（秒）
+- `CODEX_HTTPD_RPC_TIMEOUT_SEC`（任意, 既定値: `120`）: JSON-RPC 応答待ちタイムアウト（秒）
 - `CODEX_BIN`（任意, 既定値: `codex`）: Codex CLI 実行バイナリ名/パス
 - `CODEX_HOME`（必須, 既定値なし）: 認証情報 `auth.json` を含む Codex のホームディレクトリ
 
