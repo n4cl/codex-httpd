@@ -43,6 +43,8 @@
   - 完了の定義: ルータ構成がコードに反映され、エンドポイント雛形が起動する
 - [ ] 3.2 リクエスト/レスポンススキーマを実装する
   - `POST /threads`
+  - `GET /threads`
+  - `GET /threads/{threadId}`
   - `POST /threads/{threadId}/resume`
   - `POST /threads/{threadId}/turns`
   - `GET /threads/{threadId}/turns/{turnId}/events`
@@ -69,6 +71,15 @@
   - `thread/resume` を呼び、同一 `threadId` を返す
   - 設計参照: 仕様 / インターフェース > API > Thread
   - 完了の定義: 既存 thread 再開の正常系/異常系テストが通る
+- [ ] 5.3 `GET /threads` を実装する
+  - `thread/list` を透過呼び出しして結果を返す
+  - API Server 独自の thread 一覧キャッシュ/永続化は持たない
+  - 設計参照: 仕様 / インターフェース > API > Thread
+  - 完了の定義: 一覧取得とページングパラメータのテストが通る
+- [ ] 5.4 `GET /threads/{threadId}` を実装する
+  - `thread/read` を透過呼び出しして結果を返す（`includeTurns` 対応）
+  - 設計参照: 仕様 / インターフェース > API > Thread
+  - 完了の定義: 詳細取得の正常系/異常系テストが通る
 
 - [ ] 6. Turn 実行 API を実装する
 - [ ] 6.1 `POST /threads/{threadId}/turns` の非ストリーミングを実装する
@@ -79,6 +90,11 @@
   - `stream=true` 時に `turnId` と `eventsUrl` を返す
   - 設計参照: 仕様 / インターフェース > API > Turn
   - 完了の定義: ストリーミング開始 API のテストが通る
+
+- [ ] 6.3 会話専用の固定実行ポリシーを実装する
+  - `approvalPolicy` / `sandbox` / `cwd` はサーバー設定値を常に使用し、HTTP リクエストからは上書きさせない
+  - 設計参照: 要件 > 会話専用運用
+  - 完了の定義: 実行ポリシーが固定化され、リクエスト側の任意上書きが無効化される
 
 - [ ] 7. SSE イベント配信機能を実装する
 - [ ] 7.1 `GET /threads/{threadId}/turns/{turnId}/events` を実装する [要確認]

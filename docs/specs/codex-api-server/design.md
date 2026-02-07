@@ -6,6 +6,7 @@
 - Stateful / Streaming / Cancel をサポートする（Stateless は提供しない）
 - 識別子は API Server 独自発行ではなく Codex 側の値（`threadId` / `turnId`）を利用する
 - 本サーバーは Codex へのアクセス中継に専念し、永続化と利用者認証は担わない
+- API Server 独自の thread 一覧/履歴ストアは持たず、Codex の `thread/list` / `thread/read` を透過中継する
 
 ## 目的 / 背景
 - Codex CLI を HTTP 経由で利用できるようにする
@@ -25,6 +26,8 @@
 - Streaming: SSE で逐次出力を配信できる
 - Cancel: 実行中の生成を中断できる
 - Cancel 時の整合性: キャンセルした入力は会話履歴に残さない
+- 履歴参照: Codex が保持する thread の一覧/詳細を HTTP で参照できる
+- 会話専用運用: 実行ポリシー（`approvalPolicy` / `sandbox` / `cwd`）はサーバー側で固定し、HTTP リクエストで上書きしない
 - 識別子: `threadId` / `turnId` は Codex が返す ID をそのまま使う
 - 追跡子: HTTP リクエストの `requestId` は Codex JSON-RPC の `id` に対応づける
 - 永続化責務: `threadId` / `turnId` の長期保存はクライアント側で実装する
@@ -53,6 +56,7 @@
 - 実行中 turn の状態はメモリで保持する（プロセス再起動で消失）
 - `requestId` は HTTP 境界で採番し、Codex JSON-RPC `id` と相互参照可能にする
 - 永続ストア（DB/ファイル）への保存は行わない。必要な永続化はクライアント側で実施する
+- Thread 一覧は API Server で独自管理せず、都度 Codex `thread/list` に問い合わせる
 
 ### 用語
 - Thread: Stateful の会話単位。`threadId` は Codex `thread.id`
@@ -67,6 +71,12 @@
 - `POST /threads/{threadId}/resume`
   - 既存 thread を再開する
   - Codex `thread/resume` を呼び、`threadId` を返す（同一 ID）
+- `GET /threads`
+  - thread 一覧を取得する
+  - Codex `thread/list` を呼ぶ（`cursor` / `limit` / `sortKey` / `sourceKinds` などは透過）
+- `GET /threads/{threadId}`
+  - 指定 thread の詳細を取得する
+  - Codex `thread/read` を呼ぶ（`includeTurns` を透過）
 
 #### Turn
 - `POST /threads/{threadId}/turns`
