@@ -16,13 +16,25 @@ class ThreadsUseCase:
         """Thread 作成処理を実行する."""
         return await self._backend.start_thread()
 
-    async def list_threads(self) -> dict[str, Any]:
+    async def list_threads(
+        self,
+        *,
+        cursor: str | None,
+        limit: int | None,
+        sort_key: str | None,
+        source_kinds: list[str] | None,
+    ) -> dict[str, Any]:
         """Thread 一覧取得処理を実行する."""
-        return await self._backend.list_threads()
+        return await self._backend.list_threads(
+            cursor=cursor,
+            limit=limit,
+            sort_key=sort_key,
+            source_kinds=source_kinds,
+        )
 
-    async def get_thread(self, *, thread_id: str) -> dict[str, Any]:
+    async def get_thread(self, *, thread_id: str, include_turns: bool | None) -> dict[str, Any]:
         """Thread 詳細取得処理を実行する."""
-        return await self._backend.get_thread(thread_id=thread_id)
+        return await self._backend.get_thread(thread_id=thread_id, include_turns=include_turns)
 
     async def resume_thread(self, *, thread_id: str) -> dict[str, Any]:
         """Thread 再開処理を実行する."""

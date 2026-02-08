@@ -25,13 +25,21 @@ class CodexBackendStub(CodexBackendPort):
         """Thread 作成の雛形処理."""
         self._raise_not_implemented("thread/start")
 
-    async def list_threads(self) -> dict[str, Any]:
+    async def list_threads(
+        self,
+        *,
+        cursor: str | None,
+        limit: int | None,
+        sort_key: str | None,
+        source_kinds: list[str] | None,
+    ) -> dict[str, Any]:
         """Thread 一覧取得の雛形処理."""
+        _ = (cursor, limit, sort_key, source_kinds)
         self._raise_not_implemented("thread/list")
 
-    async def get_thread(self, *, thread_id: str) -> dict[str, Any]:
+    async def get_thread(self, *, thread_id: str, include_turns: bool | None) -> dict[str, Any]:
         """Thread 詳細取得の雛形処理."""
-        _ = thread_id
+        _ = (thread_id, include_turns)
         self._raise_not_implemented("thread/read")
 
     async def resume_thread(self, *, thread_id: str) -> dict[str, Any]:
@@ -39,9 +47,9 @@ class CodexBackendStub(CodexBackendPort):
         _ = thread_id
         self._raise_not_implemented("thread/resume")
 
-    async def start_turn(self, *, thread_id: str) -> dict[str, Any]:
+    async def start_turn(self, *, thread_id: str, turn_input: str, stream: bool) -> dict[str, Any]:
         """Turn 開始の雛形処理."""
-        _ = thread_id
+        _ = (thread_id, turn_input, stream)
         self._raise_not_implemented("turn/start")
 
     async def stream_turn_events(self, *, thread_id: str, turn_id: str) -> dict[str, Any]:

@@ -7,21 +7,24 @@ from codex_httpd.main import app
 
 
 @pytest.mark.parametrize(
-    ("method", "path"),
+    ("method", "path", "json_body"),
     [
-        ("post", "/threads"),
-        ("get", "/threads"),
-        ("get", "/threads/thread-1"),
-        ("post", "/threads/thread-1/resume"),
-        ("post", "/threads/thread-1/turns"),
-        ("get", "/threads/thread-1/turns/turn-1/events"),
-        ("post", "/threads/thread-1/turns/turn-1/interrupt"),
+        ("post", "/threads", None),
+        ("get", "/threads", None),
+        ("get", "/threads/thread-1", None),
+        ("post", "/threads/thread-1/resume", None),
+        ("post", "/threads/thread-1/turns", {"input": "hello", "stream": False}),
+        ("get", "/threads/thread-1/turns/turn-1/events", None),
+        ("post", "/threads/thread-1/turns/turn-1/interrupt", None),
     ],
 )
-def test_api_skeleton_endpoints_return_not_implemented(method: str, path: str) -> None:
+def test_api_skeleton_endpoints_return_not_implemented(method: str, path: str, json_body: dict[str, str | bool] | None) -> None:
     """3.1 時点のエンドポイント雛形が 501 を返すことを確認する."""
     with TestClient(app) as client:
-        response = getattr(client, method)(path)
+        if json_body is None:
+            response = getattr(client, method)(path)
+        else:
+            response = getattr(client, method)(path, json=json_body)
 
     assert response.status_code == 501
     assert response.json()["error"]["code"] == "not_implemented"
