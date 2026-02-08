@@ -89,6 +89,14 @@
 - `codex app-server`（v2 プロトコル）を子プロセスとして常駐起動し、stdio の JSON-RPC を中継する
 - turn 実行管理（中断・イベント中継）を API Server が担う
 
+### JSON-RPC 中継方針
+- HTTP リクエストと JSON-RPC request は `id` で 1:1 対応させる
+- JSON-RPC `id` は `int64` 連番で採番する
+- `id` オーバーフローは実運用上は無視できる前提で運用する
+- JSON-RPC 応答待ちタイムアウト既定値は `120` 秒とする
+- JSON-RPC request の自動リトライは行わない（重複実行を避ける）
+- 未知の notification は警告ログを出力して無視する
+
 ### ストレージ方針
 - `threadId` は Codex `thread/start` または `thread/resume` が返す `thread.id` を利用する
 - `turnId` は Codex `turn/start` が返す `turn.id` を利用する
@@ -137,6 +145,8 @@
   - 再接続時は先頭イベントから全再配信する（途中再開は行わない）
   - 終端イベント（`final` / `cancelled` / `error`）は1接続内で1回のみ配信する
   - 再接続時の重複受信に備え、クライアントは終端イベントを冪等に扱う
+  - 無通信時は heartbeat（ping）を定期送信する
+  - 接続切断時は SSE 配信側リソースのみクリーンアップし、turn 実行は継続する
 
 #### Cancel
 - `POST /threads/{threadId}/turns/{turnId}/interrupt`
@@ -159,8 +169,11 @@
 - `threadId` 不正/未知: 404
 - `turnId` 不正/未知、または `threadId` との不整合: 404
 - 同一 `threadId` の同時実行制約違反: 409
-- app-server 異常終了: `error` を SSE に通知
-- rollback 失敗: `error`（会話整合性を保証できない）
+- RPC タイムアウト: 504
+- app-server 未接続/異常終了: 503（SSE は `error` 通知）
+- JSON-RPC プロトコル不整合: 502
+- その他の内部失敗: 500
+- rollback 失敗: 500（SSE は終端 `error`、Codex 由来の `code` / `message` / `data` を保持）
 
 ## 影響範囲
 - Codex API Server のプロセス管理（`codex app-server`）
