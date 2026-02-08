@@ -14,6 +14,12 @@
 - セッション制約を踏まえ、会話を保持するモードに限定する
 - 生成の中断と整合性（キャンセル時は履歴に残さない）を保証する
 
+## ドキュメント責務境界
+- `design.md` は仕様の正本（要件、制約、API 契約、運用前提）を定義する
+- `task.md` は実装計画（作業分解、順序、完了条件）を定義する
+- 仕様値（例: イベント契約、エラー契約、同時実行ポリシー）が不一致の場合は `design.md` を正とする
+- `task.md` には仕様の再定義を増やさず、必要最小限の実装観点と `design.md` 参照を記載する
+
 ## 設計判断（妥当性評価）
 - 妥当: Codex の実運用特性（対話前提）に合わせることで、API とバックエンドの意味差を減らせる
 - 妥当: Stateless/Stateful の二重運用をやめ、実装・運用・テスト対象を絞れる
@@ -125,6 +131,12 @@
   - `final`: Codex `turn/completed` かつ `turn.status=completed`
   - `cancelled`: Codex `turn/completed` かつ `turn.status=interrupted`
   - `error`: Codex `error` または `turn/completed` かつ `turn.status=failed`
+  - 1つの SSE 接続内では先頭から順序どおり配信する
+  - 各イベントに `eventId`（SSE `id`）を付与する
+  - 配信保証は `at-least-once`（重複配信あり）とする
+  - 再接続時は先頭イベントから全再配信する（途中再開は行わない）
+  - 終端イベント（`final` / `cancelled` / `error`）は1接続内で1回のみ配信する
+  - 再接続時の重複受信に備え、クライアントは終端イベントを冪等に扱う
 
 #### Cancel
 - `POST /threads/{threadId}/turns/{turnId}/interrupt`
@@ -140,8 +152,8 @@
     `turn/completed(interrupted)` → `thread/rollback(numTurns=1)` → `cancelled`
 
 ### 同時実行
-- 同一 `threadId` は同時に 1 `turn` までを推奨
-  - 既存 turn を自動中断、または 409 を返す
+- 同一 `threadId` は同時に 1 `turn` までとする
+  - 競合時は自動中断せず `409` を返す（取得できる場合は実行中 `turnId` を含める）
 
 ### エラーハンドリング
 - `threadId` 不正/未知: 404
@@ -157,7 +169,6 @@
 
 ## リスク / 代替案
 - メモリ管理のため、プロセス再起動で実行中 turn が失われる
-- SSE 切断時の再接続仕様を別途検討する必要がある
 - rollback 失敗時の整合性保証が難しいため、運用での監視が必要
 - サーバー側で利用者認証を行わないため、公開ネットワークに露出すると不正利用リスクが高い
 
