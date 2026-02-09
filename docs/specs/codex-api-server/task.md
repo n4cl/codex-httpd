@@ -84,7 +84,7 @@
   - 起動・監視・終了・異常時復旧の流れを実装する
   - 設計参照: 仕様 / インターフェース > 全体構成 / アーキテクチャ方針 > レイヤ責務
   - 完了の定義: app-server の起動/停止がアプリライフサイクルで制御できる
-- [ ] 4.2 JSON-RPC 中継クライアントを実装する
+- [x] 4.2 JSON-RPC 中継クライアントを実装する
   - request/response/notification の送受信処理を実装する
   - `id` 対応、採番、タイムアウト、リトライ、notification 取り扱いは JSON-RPC 中継方針に準拠する
   - notification は `threadId` / `turnId` 単位で SSE 配信対象へ振り分ける
