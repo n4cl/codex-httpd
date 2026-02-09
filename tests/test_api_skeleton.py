@@ -19,7 +19,7 @@ from codex_httpd.main import app
     ],
 )
 def test_api_skeleton_endpoints_return_not_implemented(method: str, path: str, json_body: dict[str, str | bool] | None) -> None:
-    """3.1 時点のエンドポイント雛形が 501 を返すことを確認する."""
+    """エンドポイント雛形が 501 を返すことを確認する."""
     with TestClient(app) as client:
         if json_body is None:
             response = getattr(client, method)(path)

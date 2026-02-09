@@ -1,24 +1,37 @@
 """Codex app-server 連携の Infrastructure 実装."""
 
+import os
 from typing import Any
 
+from codex_httpd.infrastructure.app_server_manager import AppServerProcessManager
 from codex_httpd.usecases.errors import FeatureNotImplementedError
 from codex_httpd.usecases.ports.codex_backend import CodexBackendPort
 
 
 class CodexBackendStub(CodexBackendPort):
-    """3.1 時点の接続スケルトン実装."""
+    """Codex バックエンド接続のスケルトン実装."""
 
     def __init__(self) -> None:
         """起動状態を初期化する."""
         self.started = False
+        disable_app_server = os.getenv("CODEX_HTTPD_DISABLE_APP_SERVER", "").lower() in {"1", "true", "yes"}
+        if disable_app_server:
+            self._app_server_manager = None
+            return
+
+        codex_bin = os.getenv("CODEX_BIN", "codex")
+        self._app_server_manager = AppServerProcessManager(command=(codex_bin, "app-server"))
 
     async def startup(self) -> None:
         """起動時に接続準備を行う."""
+        if self._app_server_manager is not None:
+            await self._app_server_manager.startup()
         self.started = True
 
     async def shutdown(self) -> None:
         """停止時に接続を破棄する."""
+        if self._app_server_manager is not None:
+            await self._app_server_manager.shutdown()
         self.started = False
 
     async def start_thread(self) -> dict[str, Any]:
