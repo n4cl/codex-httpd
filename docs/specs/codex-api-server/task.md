@@ -92,7 +92,7 @@
   - 完了の定義: JSON-RPC 呼び出しの成功/失敗を API 層で扱える
 
 - [ ] 5. Thread API を実装する
-- [ ] 5.1 `POST /threads` を実装する
+- [x] 5.1 `POST /threads` を実装する
   - `thread/start` を呼び、`threadId` を返す
   - 設計参照: 仕様 / インターフェース > API > Thread
   - 完了の定義: 正常系で `threadId` が返り、異常系が定義どおりに返る
